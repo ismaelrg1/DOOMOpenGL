@@ -159,7 +159,9 @@ public class MainActivity extends Activity implements SensorEventListener {
             case KeyEvent.KEYCODE_DPAD_RIGHT:
                 myGLRenderer.moveCameraRight();
                 return true;
-
+            case KeyEvent.KEYCODE_SPACE:
+                myGLRenderer.jump();
+                return true;
         }
 
         return super.onKeyDown(keyCode, event);

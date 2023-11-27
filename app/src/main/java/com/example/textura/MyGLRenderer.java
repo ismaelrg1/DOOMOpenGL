@@ -42,10 +42,15 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     public float yCamFront=0;
     public float zCamFront=-1; // Ejemplo de posición inicial de la cámara
 
-    private float cameraSpeed = 0.5f;
+    private float cameraSpeed = 0.1f;
 
     public float pitch = 0.0f;
     public float yaw = -90.0f;
+
+    private static boolean isJumping = false;
+    private static float jumpHeight = 1.0f;
+    private static float jumpVelocity = 0.0f;
+    private static float gravity = 0.005f;
 
     long lastTime = 0, currentTime;
 
@@ -111,6 +116,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
         gl.glLoadIdentity();
 
+        updateCameraVectors();
 
         GLU.gluLookAt(gl, xCamPos, yCamPos, zCamPos, xCamPos+xCamFront, yCamPos+yCamFront, zCamPos+zCamFront, 0f, 1f, 0f);
 
@@ -190,23 +196,26 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     public void moveCameraUp() {
         pitch += 1.0f;
         if (pitch > 89.0f) pitch = 89.0f;
-        updateCameraVectors();
     }
 
     public void moveCameraDown() {
         pitch -= 1.0f;
         if (pitch < -89.0f) pitch = -89.0f;
-        updateCameraVectors();
     }
 
     public void moveCameraLeft() {
         yaw -= 1.0f;
-        updateCameraVectors();
     }
 
     public void moveCameraRight() {
         yaw += 1.0f;
-        updateCameraVectors();
+    }
+
+    public void jump() {
+        if (!isJumping){
+            isJumping = true;
+            jumpVelocity = 0.1f;
+        }
     }
 
     private void updateCameraVectors() {
@@ -220,7 +229,19 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         xCamFront = newFrontx / length;
         yCamFront = newFronty / length;
         zCamFront = newFrontz / length;
-    }
 
+
+        yCamPos += jumpVelocity;
+        if (isJumping) {
+            jumpVelocity -= gravity; // Aplicar gravedad durante el salto
+
+            // Verificar si ha alcanzado el suelo
+            if (yCamPos <= 0.0f) {
+                yCamPos = 0.0f;
+                isJumping = false;
+                jumpVelocity = 0.0f;
+            }
+        }
+    }
 
 }
