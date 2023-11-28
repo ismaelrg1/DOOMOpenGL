@@ -98,13 +98,9 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         light.setAmbientColor(new float[]{0.1f, 0.1f, 0.1f});
         light.setDiffuseColor(new float[]{1, 1, 1});
 
-
+        this.object3D.loadTexture(gl,context, R.raw.brick);
         // You OpenGL|ES initialization code here
         // ......
-        textureCube.loadTexture(gl, context);    // Load image into Texture (NEW)
-        walls[0].loadTexture(gl, context);
-        walls[1].loadTexture(gl, context);
-        walls[2].loadTexture(gl, context);
 
     }
 
