@@ -30,6 +30,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     Wall[] walls = new Wall[4];
     float[] angular = new float[3];
 
+    private Light light;
+    Object3D object3D;
 
     TextureCube textureCube;
     float angle = 0;
@@ -57,6 +59,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
     // Constructor with global application context
     public MyGLRenderer(Context context) {
+        this.object3D = new Object3D(context, R.raw.mapaisma);
         this.context = context;
         this.triangle = new Triangle();
         this.textureCube = new TextureCube();
@@ -75,6 +78,26 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);  // nice perspective view
         gl.glShadeModel(GL10.GL_SMOOTH);   // Enable smooth shading of color
         gl.glDisable(GL10.GL_DITHER);      // Disable dithering for better performance
+        gl.glEnable(GL10.GL_BLEND);
+        gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+
+        gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);  // nice perspective view
+        gl.glShadeModel(GL10.GL_SMOOTH);   // Enable smooth shading of color
+        gl.glDisable(GL10.GL_DITHER);      // Disable dithering for better performance
+
+        gl.glEnable(GL10.GL_LIGHTING);
+
+        // Enable Normalize
+        gl.glEnable(GL10.GL_NORMALIZE);
+        // You OpenGL|ES initialization code here
+        // ......
+
+        light = new Light(gl, GL10.GL_LIGHT0);
+        light.setPosition(new float[]{0.0f, 0f, 1, 0.0f});
+
+        light.setAmbientColor(new float[]{0.1f, 0.1f, 0.1f});
+        light.setDiffuseColor(new float[]{1, 1, 1});
+
 
         // You OpenGL|ES initialization code here
         // ......
@@ -119,6 +142,10 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         updateCameraVectors();
 
         GLU.gluLookAt(gl, xCamPos, yCamPos, zCamPos, xCamPos+xCamFront, yCamPos+yCamFront, zCamPos+zCamFront, 0f, 1f, 0f);
+
+        gl.glPushMatrix();// Reset model-view matrix ( NEW )
+        object3D.draw(gl);                   // Draw triangle ( NEW )
+        gl.glPopMatrix();
 
 
         gl.glPushMatrix();
